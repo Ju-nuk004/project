@@ -5,10 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>게시글 조회</title>
+  <link rel="stylesheet" href="/css/product/products.css">
   <th:block th:if="${session.loginMember}">
     <script th:inline="javascript">
       window.chacklog = [[${session.loginMember}]];
       window.logmember = [[${session.loginMember.nickname}]];
+      window.logemail = [[${session.loginMember.email}]];
       window.textmember = [[${product.pname}]];
     </script>
   </th:block>

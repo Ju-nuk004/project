@@ -201,4 +201,41 @@ public class ProductDAOImpl implements ProductDAO{
 
     return Textlist;
   }
+
+  @Override
+  public int deleteTextById(Long tester_id) {
+    StringBuffer sql = new StringBuffer();
+    sql.append("delete from tester ");
+    sql.append(" where tester_id = :tester_id ");
+
+    SqlParameterSource param = new MapSqlParameterSource()
+        .addValue("tester_id",tester_id);
+
+    int deletedRowCnt = template.update(sql.toString(), param);
+
+    return deletedRowCnt;
+  }
+
+  @Override
+  public int updateTextById(Long tester_id, Tester tester) {
+    StringBuffer sql = new StringBuffer();
+    sql.append("update tester ");
+    sql.append("   set nickname = :nickname, ");
+    sql.append("       email = :email, ");
+    sql.append("       tesetlog = :tesetlog, ");
+    sql.append("       udate = default ");
+    sql.append(" where tester_id = :tester_id ");
+
+    //sql 파라미터 변수에 값 매핑
+    SqlParameterSource param = new MapSqlParameterSource()
+        .addValue("nickname", tester.getNickname())
+        .addValue("email", tester.getEmail())
+        .addValue("tesetlog", tester.getTesetlog())
+        .addValue("tester_id", tester_id);
+
+    //update수행 후 변경된 행수 반환
+    int updateRowCnt = template.update(sql.toString(), param);
+
+    return updateRowCnt;
+  }
 }

@@ -36,4 +36,8 @@ public interface ProductSVC {
   Optional<Tester> findByTextId(Long testerId);
 
   List<Tester> findTextAll(Long reqPage,Long recordCnt);
+
+  int deleteTextById(Long testerId);
+
+  int updateTextById(Long testerId, Tester tester);
 }

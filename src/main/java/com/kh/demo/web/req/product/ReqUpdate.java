@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ReqUpdate {
-  private String pname;
-  private String quantity;
-  private String price;
+  private String nickname;
+  private String email;
+  private String tesetlog;
 }

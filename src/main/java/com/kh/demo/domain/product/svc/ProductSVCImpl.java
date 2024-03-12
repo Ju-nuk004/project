@@ -73,5 +73,13 @@ public class ProductSVCImpl implements ProductSVC{
     return productDAO.findTextAll(reqPage,recordCnt);
   }
 
+  @Override
+  public int deleteTextById(Long tester_id) {
+    return productDAO.deleteTextById(tester_id);
+  }
 
+  @Override
+  public int updateTextById(Long tester_id, Tester tester) {
+    return productDAO.updateTextById(tester_id, tester);
+  }
 }

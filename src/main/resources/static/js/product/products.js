@@ -18,6 +18,10 @@ function renderHTML(){
              <div>
                    <form id='frm'>
                      <h3>댓글창</h3>
+                     <div hidden>
+                       <label for="email">이메일</label>
+                       <input id='email' name='email' type="text" value=${window.logemail} readonly >
+                     </div>
                      <div>
                        <label for="pname">유저명</label>
                        <input id='pname' name='pname' type="text" value=${window.logmember} readonly>
@@ -35,11 +39,14 @@ function renderHTML(){
             $addBtn.addEventListener('click',evt=>{
               console.log('등록');
               const formData = new FormData($div.querySelector('#frm'));
-              const product = {
-                pname : formData.get('pname'),
-                quantity : formData.get('quantity')
+              const tester = {
+
+                nickname : formData.get('pname'),
+                tesetlog : formData.get('quantity'),
+                email : formData.get('email')
               }
-              add(product);
+              console.log(tester);
+              add(tester);
             });
     }
 
@@ -76,14 +83,15 @@ async function list() {
     if(result.header.rtcd == '00'){
       console.log(result.body);
       const str = result.body.map(item=>
-                                    `<div>
-                                      <span>${item.nickname}</span>
-                                      <span>${item.tesetlog}</span>
-                                      <span>수정날짜: ${item.udate}</span>
-                                      <button>수정</button>
-                                      <button>삭제</button>
-                                    </div>`).join('');
-
+                                 `<div >
+                                 <span id="tester_id" hidden>${item.tester_id}</span>
+                                 <span id="email" hidden>${item.email}</span>
+                                  <span id="nickname">${item.nickname}</span>
+                                  <span id="tesetlog">${item.tesetlog}</span>
+                                  <span id="udate">수정날짜: ${item.udate}</span>
+                                  <span><button class="minimodifyBtn">수정</button></span>
+                                  <span><button class="minidelBtn">삭제</button></span>
+                                </div>`).join('');
       $productList.innerHTML = str;
 
       //총 레코드 건수
@@ -103,14 +111,13 @@ async function list() {
 //등록
 async function add(Tester) {
   const url = `http://localhost:9080/api/products`;
-  const payload = tester;
   const option = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
     },
-    body: JSON.stringify(payload),   // js객체=>json포맷 문자열
+    body: JSON.stringify(Tester),   // js객체=>json포맷 문자열
   };
   try {
     const res = await fetch(url, option);
@@ -133,23 +140,25 @@ async function add(Tester) {
 // };
 
 //수정
-async function update(pid,Tester) {
+async function update(pid,tester) {
   const url = `http://localhost:9080/api/products/${pid}`;
-  const payload = tester
   const option = {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',  // 요청메세지 바디의 데이터포맷 타입
       accept: 'application/json',          // 응답메세지 바다의 데이터포맷 타입
     },
-    body: JSON.stringify(payload), // js객체=>json포맷 문자열
+    body: JSON.stringify(tester), // js객체=>json포맷 문자열
   };
   try {
     const res = await fetch(url, option);
+    console.log(res);
     if (!res.ok) return new Error('서버응답오류');
     const result = await res.json(); //응답메세지 바디를 읽어 json포맷 문자열=>js객체
+    console.log(result.header.rtcd);
     if (result.header.rtcd == '00') {
       console.log(result.body);
+      list();
     } else {
       new Error('수정 실패!');
     }
@@ -165,6 +174,7 @@ async function update(pid,Tester) {
 // update(263,product);
 //삭제
 async function deleteById(pid) {
+
   const url = `http://localhost:9080/api/products/${pid}`;
   const option = {
     method: 'DELETE',
@@ -174,10 +184,13 @@ async function deleteById(pid) {
   };
   try {
     const res = await fetch(url, option);
+    console.log(res);
     if (!res.ok) return new Error('서버응답오류');
     const result = await res.json(); //응답메세지 바디를 읽어 json포맷 문자열=>js객체
+    console.log(result.header.rtcd);
     if (result.header.rtcd == '00') {
       console.log(result.body);
+      list();
     } else {
       new Error('삭제 실패!');
     }
@@ -185,5 +198,50 @@ async function deleteById(pid) {
     console.error(err.message);
   }
 }
+async function cancel(){
+        console.log('취소');
+        list();
+    }
+async function modify(evt){
+      console.log('수정');
+      const $div = evt.target.closest('div');
+      const $tester_id = evt.target.closest('div').querySelector('#tester_id').innerText;
+      const $email = evt.target.closest('div').querySelector('#email').innerText;
+      const $nickname = evt.target.closest('div').querySelector('#nickname').innerText;
+      const $tesetlog = evt.target.closest('div').querySelector('#tesetlog').innerText;
+      console.log(evt.target.closest('div').querySelector('#udate').innerText);
+      const str = `<div>
+                    <form id='data'>
+                    <span id="tester_id" hidden><input id='tester_id' name='tester_id' type="text" value= ${$tester_id} readonly ></span>
+                    <span id="email" hidden><input id='email' name='email' type="text" value= ${$email} readonly ></span>
+                    <span id="nickname"><input id='nickname' name='nickname' type="text" value=${$nickname} readonly></span>
+                    <span id="tesetlog"><input id='tesetlog' name='tesetlog' type="text" value=${$tesetlog} ></span>
+                    <span><button type='button' class="minisaveBtn">저장</button></span>
+                    <span><button type='button' class="minicancelBtn">취소</button></span>
+                  </form>
+                  </div>`;
+      $div.innerHTML = str;
+    }
+document.querySelector('#productList').addEventListener('click',evt=>{
+      if(evt.target.tagName !== 'BUTTON') return;
+      switch(evt.target.classList[0]){
+        //수정
+        case "minimodifyBtn" : modify(evt); break;
+        //삭제
+        case "minidelBtn" : deleteById(parseInt(evt.target.closest('div').querySelector('#tester_id').innerText)); break;
+        //저장
+        case "minisaveBtn" :
+            const formData = new FormData(document.querySelector('#data'));
+            const tester = {
+                            nickname : formData.get('nickname'),
+                            tesetlog : formData.get('tesetlog'),
+                            email : formData.get('email')
+                          };
+            update(parseInt(formData.get('tester_id')),tester);
+            break;
+        //취소
+        case "minicancelBtn" : cancel(); break;
+      }
+    });
 // deleteById(263);
 // findById(263);

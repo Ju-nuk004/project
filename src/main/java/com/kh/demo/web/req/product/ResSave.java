@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ResSave {
-  private Long productId;
-  private String pname;
+  private Long tester_id;
+  private String nickname;
 }

@@ -1,7 +1,6 @@
 package com.kh.demo.web;
 
 
-import com.kh.demo.domain.entity.Product;
 import com.kh.demo.domain.entity.Tester;
 import com.kh.demo.domain.product.svc.ProductSVC;
 import com.kh.demo.web.api.ApiResponse;
@@ -40,17 +39,18 @@ public class ApiProductController {
 //    product.setPname(reqSave.getPname());
 //    product.setQuantity(reqSave.getQuantity());
 //    product.setPrice(reqSave.getPrice());
-    Product product = new Product();
-    BeanUtils.copyProperties(reqSave,product);
-    Long productId = productSVC.save(product);
+    Tester tester = new Tester();
+    BeanUtils.copyProperties(reqSave,tester);
+    Long testerId = productSVC.savetext(tester);
 
-    ResSave resSave = new ResSave(productId,reqSave.getPname());
+    ResSave resSave = new ResSave(testerId,reqSave.getNickname());
 
-    String rtDetail = "상품번호 " + productId + " 가 등록 되었습니다";
+    String rtDetail = "상품번호 " + testerId + " 가 등록 되었습니다";
     ApiResponse<ResSave> res = ApiResponse.createApiResponseDetail(
         ResCode.OK.getCode(), ResCode.OK.name(), rtDetail, resSave);
     return res;
   }
+
   //조회
 //  @ResponseBody
   @GetMapping("/{pid}")
@@ -86,15 +86,15 @@ public class ApiProductController {
     //1)유효성체크
 
     //2)수정
-    Product product = new Product();
-    BeanUtils.copyProperties(reqUpdate, product);
+    Tester tester = new Tester();
+    BeanUtils.copyProperties(reqUpdate, tester);
 
-    int updatedCnt = productSVC.updateById(pid, product);
+    int updatedCnt = productSVC.updateTextById(pid, tester);
     ApiResponse<ResUpdate> res = null;
     if(updatedCnt == 1){
       ResUpdate resUpdate = new ResUpdate();
       BeanUtils.copyProperties(reqUpdate, resUpdate);
-      resUpdate.setProductId(pid);
+      resUpdate.setTester_id(pid);
 
       res = ApiResponse.createApiResponse(ResCode.OK.getCode(), ResCode.OK.name(), resUpdate);
     }else{
@@ -107,7 +107,7 @@ public class ApiProductController {
 //  @ResponseBody
   @DeleteMapping("/{pid}")
   public  ApiResponse<?>  delete(@PathVariable("pid") Long pid){
-    int deletedCnt = productSVC.deleteById(pid);
+    int deletedCnt = productSVC.deleteTextById(pid);
     ApiResponse<ResUpdate> res = null;
 
     if(deletedCnt == 1){
