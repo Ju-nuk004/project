@@ -78,7 +78,7 @@ insert into member (member_id,email,passwd,nickname)
     values(member_member_id_seq.nextval,'user2@kh.com','user2','사용자2');
 
 
---회원테이블
+--닉네임
 create table tester(
     tester_id   number(10),     --내부관리 아이디
     email       varchar2(50),   --로긴 아이디
